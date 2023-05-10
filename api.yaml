@@ -1,0 +1,126 @@
+openapi: 3.0.0
+info:
+  title: Friends Service
+  description: A service for managing user friendships
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000
+paths:
+  /users/:
+    post:
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+              required:
+                - username
+      responses:
+        "201":
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  username:
+                    type: string
+    get:
+      summary: Get a list of all users
+      responses:
+        "200":
+          description: List of all users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    username:
+                      type: string
+  /users/{user_id}/friends/:
+    post:
+      summary: Send a friend request to another user
+      parameters:
+        - in: path
+          name: user_id
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: friend_id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "201":
+          description: Friend request sent successfully
+    get:
+      summary: Get a list of all friend requests for a user
+      parameters:
+        - in: path
+          name: user_id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of all friend requests for a user
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    sender_id:
+                      type: integer
+                    receiver_id:
+                      type: integer
+                    status:
+                      type: string
+                      enum: ["pending", "accepted", "rejected"]
+  /users/{user_id}/friends/{friend_id}/:
+    put:
+      summary: Accept a friend request
+      parameters:
+        - in: path
+          name: user_id
+          required: true
+          schema:
+            type: integer
+        - in: path
+          name: friend_id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Friend request accepted successfully
+    delete:
+      summary: Reject a friend request or remove a friend
+      parameters:
+        - in: path
+          name: user_id
+          required: true
+          schema:
+            type: integer
+        - in: path
+          name: friend_id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
